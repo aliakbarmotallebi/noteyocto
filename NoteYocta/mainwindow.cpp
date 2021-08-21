@@ -10,12 +10,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setWindowTitle(defaultWindowTitle);
+    resetEditor();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+QMessageBox::StandardButton  MainWindow::promptYesOrNo(QString title, QString prompt)
+{
+    return QMessageBox::question(this, title, prompt, QMessageBox::Yes | QMessageBox::No);
+}
+
+void MainWindow::resetEditor()
+{
+    currentFile.clear();
+    ui->textEdit->setText(QString());
+    setWindowTitle(defaultWindowTitle);
+    fileNeedsToBeSaved = false;
 }
 
 QString MainWindow::getFileNameFromPath(QString filePath){
@@ -33,10 +46,9 @@ void MainWindow::actionNew()
 {
 
     if(fileNeedsToBeSaved){
-        QMessageBox::standardButton userSelection;
-        userSelection = QMessageBox::question(this, "Text Editor",
-                              "Do you want to save the changes to " + getFileNameFromPath(currentFile) + "?",
-                              QMessageBox::Yes | QMessageBox::No);
+
+        QMessageBox::StandardButton userSelection;
+        userSelection = promptYesOrNo("", "Do you want to save the changes to " + getFileNameFromPath(currentFile) + "?");
 
         if(userSelection == QMessageBox::Yes)
         {
@@ -44,10 +56,7 @@ void MainWindow::actionNew()
         }
     }
 
-    currentFile.clear();
-    ui->textEdit->setText(QString());
-    setWindowTitle(defaultWindowTitle);
-
+    resetEditor();
 }
 
 void MainWindow::actionSave()
