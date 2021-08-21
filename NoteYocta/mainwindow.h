@@ -16,8 +16,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void resetEditor();
-    QMessageBox::StandardButton promptYesOrNo(QString title, QString prompt);
+    void allowUserToSave();
     void setFont(QString family, QFont::StyleHint styleHint, bool fixedPitch, int pointSize);
+    void closeEvent(QCloseEvent *event);
     void setTabStopWidth(int width);
     const QString defaultWindowTitle = "Untitled document";
 
@@ -34,8 +35,20 @@ private:
 public slots:
     void actionSave_and_actionSaveAs();
     void textChanged();
-    void actionOpen();
     void actionNew();
+    void actionOpen();
+    void actionUndo();
+    void actionRedo();
+    void actionCut();
+    void actionCopy();
+    void actionPaste();
+    void actionFind();
+    void actionFindNext();
+    void actionReplace();
+    void actionGoTo();
+    void actionSeleteAll();
+    void actionExit();
+
 };
 
 #endif // MAINWINDOW_H

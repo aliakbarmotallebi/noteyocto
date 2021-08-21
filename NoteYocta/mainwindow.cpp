@@ -1,9 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QCloseEvent>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -17,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
     connect(ui->actionSave_As, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
-
 }
 
 MainWindow::~MainWindow()
@@ -29,7 +30,7 @@ void MainWindow::setTabStopWidth(int width)
 {
     tabStopWidth = width;
     QFontMetrics metrics(font);
-    ui->textEdit->setTabStopWidth(tabStopWidth * metrics.width(' '));
+    ui->textEdit->setTabStopWidth((int)(tabStopWidth * metrics.width(' ')));
 }
 
 void MainWindow::setFont(QString family, QFont::StyleHint styleHint,
@@ -42,9 +43,18 @@ void MainWindow::setFont(QString family, QFont::StyleHint styleHint,
     ui->textEdit->setFont(font);
 }
 
-QMessageBox::StandardButton  MainWindow::promptYesOrNo(QString title, QString prompt)
+void MainWindow::allowUserToSave()
 {
-    return QMessageBox::question(this, title, prompt, QMessageBox::Yes | QMessageBox::No);
+    QMessageBox::StandardButton userSelection;
+
+    userSelection = QMessageBox::question(this, "",
+                          "Do you want to save the changes to " + getFileNameFromPath(currentFilePath) + "?",
+                          QMessageBox::Yes | QMessageBox::No);
+
+    if(userSelection == QMessageBox::Yes)
+    {
+        actionSave_and_actionSaveAs();
+    }
 }
 
 void MainWindow::resetEditor()
@@ -68,18 +78,9 @@ QString MainWindow::getFileNameFromPath(QString filePath){
 
 void MainWindow::actionNew()
 {
-
     if(fileNeedsToBeSaved){
-
-        QMessageBox::StandardButton userSelection;
-        userSelection = promptYesOrNo("", "Do you want to save the changes to " + getFileNameFromPath(currentFilePath) + "?");
-
-        if(userSelection == QMessageBox::Yes)
-        {
-            actionSave();
-        }
+        allowUserToSave();
     }
-
     resetEditor();
 }
 
@@ -119,6 +120,10 @@ void MainWindow::actionSave_and_actionSaveAs()
 
 void MainWindow::actionOpen()
 {
+    if(fileNeedsToBeSaved){
+        allowUserToSave();
+    }
+
     QString filePath = QFileDialog::getOpenFileName(this, "Open");
     QFile file(filePath);
 
@@ -140,5 +145,44 @@ void MainWindow::actionOpen()
     fileNeedsToBeSaved = false;
 }
 
+void MainWindow::actionUndo(){ ui->textEdit->undo(); }
+
+void MainWindow::actionRedo(){ ui->textEdit->redo(); }
+
+void MainWindow::actionCut(){ ui->textEdit->cut(); }
+
+void MainWindow::actionCopy(){ ui->textEdit->copy(); }
+
+void MainWindow::actionPaste(){ ui->textEdit->paste(); }
+
+void MainWindow::actionFind(){ ui->textEdit->find(""); }
+
+void MainWindow::actionFindNext(){}
+
+void MainWindow::actionReplace(){}
+
+void MainWindow::actionGoTo(){}
+
+void MainWindow::actionSeleteAll(){}
 
 void MainWindow::textChanged() { fileNeedsToBeSaved = true; }
+
+void MainWindow::actionExit()
+{
+    if(fileNeedsToBeSaved)
+    {
+        allowUserToSave();
+    }
+
+    QApplication::quit();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if(fileNeedsToBeSaved)
+      {
+          event->ignore();
+          allowUserToSave();
+      }
+      event->accept();
+}
