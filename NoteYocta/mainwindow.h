@@ -32,10 +32,10 @@ private:
 
 
 public slots:
-    void actionNew();
-    void actionSave();
-    void actionOpen();
+    void actionSave_and_actionSaveAs();
     void textChanged();
+    void actionOpen();
+    void actionNew();
 };
 
 #endif // MAINWINDOW_H

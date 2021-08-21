@@ -13,6 +13,11 @@ MainWindow::MainWindow(QWidget *parent) :
     resetEditor();
     setFont("Courier", QFont::Monospace, true, 10);
     setTabStopWidth(5);
+
+
+    connect(ui->actionSave, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
+    connect(ui->actionSave_As, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
+
 }
 
 MainWindow::~MainWindow()
@@ -78,9 +83,12 @@ void MainWindow::actionNew()
     resetEditor();
 }
 
-void MainWindow::actionSave()
+void MainWindow::actionSave_and_actionSaveAs()
 {
-    if(currentFilePath.isEmpty()){
+    // If user hit Save As or user hit Save but current document was never saved to disk
+    bool saveAs = (sender() == ui->actionSave_As);
+
+    if(saveAs || currentFilePath.isEmpty()){
 
         QString filePath = QFileDialog::getSaveFileName(this, "Save");
 
