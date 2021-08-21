@@ -11,11 +11,30 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     resetEditor();
+    setFont("Courier", QFont::Monospace, true, 10);
+    setTabStopWidth(5);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::setTabStopWidth(int width)
+{
+    tabStopWidth = width;
+    QFontMetrics metrics(font);
+    ui->textEdit->setTabStopWidth(tabStopWidth * metrics.width(' '));
+}
+
+void MainWindow::setFont(QString family, QFont::StyleHint styleHint,
+                       bool fixedPitch, int pointSize)
+{
+    font.setFamily(family);
+    font.setStyleHint(styleHint);
+    font.setFixedPitch(fixedPitch);
+    font.setPointSize(pointSize);
+    ui->textEdit->setFont(font);
 }
 
 QMessageBox::StandardButton  MainWindow::promptYesOrNo(QString title, QString prompt)

@@ -17,11 +17,15 @@ public:
     ~MainWindow();
     void resetEditor();
     QMessageBox::StandardButton promptYesOrNo(QString title, QString prompt);
+    void setFont(QString family, QFont::StyleHint styleHint, bool fixedPitch, int pointSize);
+    void setTabStopWidth(int width);
     const QString defaultWindowTitle = "Untitled document";
 
 
 private:
     QString getFileNameFromPath(QString filePath);
+    QFont font;
+    int tabStopWidth;
     Ui::MainWindow *ui;
     QString currentFile;
     bool fileNeedsToBeSaved = true;
