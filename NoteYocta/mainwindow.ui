@@ -44,7 +44,6 @@
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
     <addaction name="separator"/>
-    <addaction name="actionPage_Setup"/>
     <addaction name="actionPrint"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -146,12 +145,7 @@
     <string>Save As</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="actionPage_Setup">
-   <property name="text">
-    <string>Page Setup</string>
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionPrint">
