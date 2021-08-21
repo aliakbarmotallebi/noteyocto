@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/icons/app-icon.ico</file>
+        <file>resources/icons/copy.bmp</file>
+        <file>resources/icons/cut.bmp</file>
+        <file>resources/icons/folder.bmp</file>
+        <file>resources/icons/new.bmp</file>
+        <file>resources/icons/paste.bmp</file>
+        <file>resources/icons/printer.bmp</file>
+        <file>resources/icons/redo.bmp</file>
+        <file>resources/icons/save.bmp</file>
+        <file>resources/icons/save-as.bmp</file>
+        <file>resources/icons/search.bmp</file>
+        <file>resources/icons/undo.bmp</file>
+    </qresource>
+</RCC>
