@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "finddialog.h"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -18,6 +19,11 @@ MainWindow::MainWindow(QWidget *parent) :
     setFont("Courier", QFont::Monospace, true, 10);
     setTabStopWidth(5);
 
+    findDialog = new FindDialog();
+    findDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
+    findDialog->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint); // to prevent resizing
+    connect(findDialog, &FindDialog::queryTextReady, this, &MainWindow::on_findQueryText_ready);
+
 
 
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
@@ -26,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete findDialog;
     delete ui;
 }
 
@@ -52,7 +59,7 @@ void MainWindow::allowUserToSave()
 
     userSelection = QMessageBox::question(this, "",
                           "Do you want to save the changes to " + getFileNameFromPath(currentFilePath) + "?",
-                          QMessageBox::Yes | QMessageBox::No);
+                          QMessageBox::Yes | QMessageBox::No );
 
     if(userSelection == QMessageBox::Yes)
     {
@@ -154,7 +161,7 @@ void MainWindow::on_actionRedo_triggered(){ ui->textEdit->redo(); }
 void MainWindow::on_actionCut_triggered(){ ui->textEdit->cut(); }
 void MainWindow::on_actionCopy_triggered(){ ui->textEdit->copy(); }
 void MainWindow::on_actionPaste_triggered(){ ui->textEdit->paste(); }
-void MainWindow::on_actionFind_triggered(){ ui->textEdit->find(""); }
+void MainWindow::on_actionFind_triggered(){ findDialog->show(); }
 void MainWindow::on_actionFindNext_triggered(){}
 void MainWindow::on_actionReplace_triggered(){}
 void MainWindow::on_actionGoTo_triggered(){}
@@ -180,14 +187,41 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if(! fileNeedsToBeSaved)
+    if(fileNeedsToBeSaved)
       {
-         event->accept();
-         return;
+        event->ignore();
+        allowUserToSave();
       }
 
-    event->ignore();
-    allowUserToSave();
+    if(! findDialog->isHidden())
+    {
+        findDialog->close();
+    }
+
+    event->accept();
+}
+
+void MainWindow::on_findQueryText_ready(QString queryText)
+{
+    ui->textEdit->find("");
+    int oldCursorPosition = ui->textEdit->textCursor().position();
+    ui->textEdit->moveCursor(QTextCursor::Start);
+    bool matchFound = ui->textEdit->find(queryText, QTextDocument::FindWholeWords);
+    qDebug() << matchFound;
+
+    if(matchFound)
+    {
+        findDialog->clearLineEdit();
+        findDialog->hide();
+    }
+    else
+    {
+        QTextCursor newCursor = ui->textEdit->textCursor();
+        newCursor.setPosition(oldCursorPosition);
+        ui->textEdit->setTextCursor(newCursor);
+        QMessageBox::information(findDialog, tr("Find unsuccessful"), tr("No results found."));
+    }
+
 }
 
 void MainWindow::on_actionPrint_triggered()

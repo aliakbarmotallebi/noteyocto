@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "finddialog.h"
+
 #include <QMainWindow>
 #include <QMessageBox>
 
@@ -21,6 +23,7 @@ public:
     void closeEvent(QCloseEvent *event);
     void setTabStopWidth(int width);
     const QString defaultWindowTitle = "Untitled document";
+    FindDialog *findDialog;
 
 
 private:
@@ -49,6 +52,7 @@ public slots:
     void on_actionSeleteAll_triggered();
     void on_actionExit_triggered();
     void on_actionPrint_triggered();
+    void on_findQueryText_ready(QString queryText);
 
 };
 
