@@ -24,8 +24,6 @@ MainWindow::MainWindow(QWidget *parent) :
     findDialog->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint); // to prevent resizing
     connect(findDialog, &FindDialog::queryTextReady, this, &MainWindow::on_findQueryText_ready);
 
-
-
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
     connect(ui->actionSave_As, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
 }
