@@ -101,7 +101,9 @@ void MainWindow::actionSave_and_actionSaveAs()
 
     if(saveAs || currentFilePath.isEmpty()){
 
-        QString filePath = QFileDialog::getSaveFileName(this, "Save");
+        QString saveDialogWindowTitle = saveAs ? tr("Save As") : tr("Save");
+
+        QString filePath = QFileDialog::getSaveFileName(this, saveDialogWindowTitle);
 
         if(filePath.isNull())
         {
