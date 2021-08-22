@@ -34,21 +34,21 @@ private:
 
 public slots:
     void actionSave_and_actionSaveAs();
-    void textChanged();
-    void actionNew();
-    void actionOpen();
-    void actionUndo();
-    void actionRedo();
-    void actionCut();
-    void actionCopy();
-    void actionPaste();
-    void actionFind();
-    void actionFindNext();
-    void actionReplace();
-    void actionGoTo();
-    void actionSeleteAll();
-    void actionExit();
-    void actionPrint();
+    void on_textEdit_textChanged();
+    void on_actionNew_triggered();
+    void on_actionOpen_triggered();
+    void on_actionUndo_triggered();
+    void on_actionRedo_triggered();
+    void on_actionCut_triggered();
+    void on_actionCopy_triggered();
+    void on_actionPaste_triggered();
+    void on_actionFind_triggered();
+    void on_actionFindNext_triggered();
+    void on_actionReplace_triggered();
+    void on_actionGoTo_triggered();
+    void on_actionSeleteAll_triggered();
+    void on_actionExit_triggered();
+    void on_actionPrint_triggered();
 
 };
 

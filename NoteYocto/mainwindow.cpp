@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setFont("Courier", QFont::Monospace, true, 10);
     setTabStopWidth(5);
 
-    connect(ui->actionPrint, &QAction::triggered, this, &MainWindow::actionPrint);
 
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
     connect(ui->actionSave_As, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
@@ -79,7 +78,9 @@ QString MainWindow::getFileNameFromPath(QString filePath){
     return fileName;
 }
 
-void MainWindow::actionNew()
+
+
+void MainWindow::on_actionNew_triggered()
 {
     if(fileNeedsToBeSaved){
         allowUserToSave();
@@ -121,7 +122,7 @@ void MainWindow::actionSave_and_actionSaveAs()
     fileNeedsToBeSaved = false;
 }
 
-void MainWindow::actionOpen()
+void MainWindow::on_actionOpen_triggered()
 {
     if(fileNeedsToBeSaved){
         allowUserToSave();
@@ -147,30 +148,23 @@ void MainWindow::actionOpen()
 
     fileNeedsToBeSaved = false;
 }
+void MainWindow::on_actionUndo_triggered(){ ui->textEdit->undo(); }
+void MainWindow::on_actionRedo_triggered(){ ui->textEdit->redo(); }
+void MainWindow::on_actionCut_triggered(){ ui->textEdit->cut(); }
+void MainWindow::on_actionCopy_triggered(){ ui->textEdit->copy(); }
+void MainWindow::on_actionPaste_triggered(){ ui->textEdit->paste(); }
+void MainWindow::on_actionFind_triggered(){ ui->textEdit->find(""); }
+void MainWindow::on_actionFindNext_triggered(){}
+void MainWindow::on_actionReplace_triggered(){}
+void MainWindow::on_actionGoTo_triggered(){}
+void MainWindow::on_actionSeleteAll_triggered(){}
 
-void MainWindow::actionUndo(){ ui->textEdit->undo(); }
+void MainWindow::on_textEdit_textChanged() {
+    fileNeedsToBeSaved = true;
+    setWindowTitle(getFileNameFromPath(currentFilePath).append(" [Unsaved changes]"));
+}
 
-void MainWindow::actionRedo(){ ui->textEdit->redo(); }
-
-void MainWindow::actionCut(){ ui->textEdit->cut(); }
-
-void MainWindow::actionCopy(){ ui->textEdit->copy(); }
-
-void MainWindow::actionPaste(){ ui->textEdit->paste(); }
-
-void MainWindow::actionFind(){ ui->textEdit->find(""); }
-
-void MainWindow::actionFindNext(){}
-
-void MainWindow::actionReplace(){}
-
-void MainWindow::actionGoTo(){}
-
-void MainWindow::actionSeleteAll(){}
-
-void MainWindow::textChanged() { fileNeedsToBeSaved = true; }
-
-void MainWindow::actionExit()
+void MainWindow::on_actionExit_triggered()
 {
     if(fileNeedsToBeSaved)
     {
@@ -190,7 +184,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
       event->accept();
 }
 
-void MainWindow::actionPrint()
+void MainWindow::on_actionPrint_triggered()
 {
     QPrinter printer;
     printer.setPrinterName("Document");
