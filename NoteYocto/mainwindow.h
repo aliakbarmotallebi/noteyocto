@@ -48,6 +48,7 @@ public slots:
     void actionGoTo();
     void actionSeleteAll();
     void actionExit();
+    void actionPrint();
 
 };
 

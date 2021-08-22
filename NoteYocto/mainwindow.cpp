@@ -6,6 +6,8 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QDebug>
+#include <QPrinter>
+#include <QPrintDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setFont("Courier", QFont::Monospace, true, 10);
     setTabStopWidth(5);
 
+    connect(ui->actionPrint, &QAction::triggered, this, &MainWindow::actionPrint);
 
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
     connect(ui->actionSave_As, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
@@ -185,4 +188,17 @@ void MainWindow::closeEvent(QCloseEvent *event)
           allowUserToSave();
       }
       event->accept();
+}
+
+void MainWindow::actionPrint()
+{
+    QPrinter printer;
+    printer.setPrinterName("Document");
+
+    QPrintDialog printDialog(&printer, this);
+
+    if(printDialog.exec() != QPrintDialog::Rejected)
+       {
+           ui->textEdit->print(&printer);
+       }
 }
