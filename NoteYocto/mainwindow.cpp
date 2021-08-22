@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setTabStopWidth(5);
 
 
+
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
     connect(ui->actionSave_As, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
 }
@@ -62,7 +63,7 @@ void MainWindow::allowUserToSave()
 void MainWindow::resetEditor()
 {
     currentFilePath.clear();
-    ui->textEdit->setText(QString());
+    ui->textEdit->setText("");
     setWindowTitle(defaultWindowTitle);
     fileNeedsToBeSaved = false;
 }
@@ -160,8 +161,11 @@ void MainWindow::on_actionGoTo_triggered(){}
 void MainWindow::on_actionSeleteAll_triggered(){}
 
 void MainWindow::on_textEdit_textChanged() {
+
     fileNeedsToBeSaved = true;
-    setWindowTitle(getFileNameFromPath(currentFilePath).append(" [Unsaved changes]"));
+
+    QString newWindowTitle = getFileNameFromPath(currentFilePath).append(" [Unsaved changes]");
+    setWindowTitle(newWindowTitle);
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -176,12 +180,14 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if(fileNeedsToBeSaved)
+    if(! fileNeedsToBeSaved)
       {
-          event->ignore();
-          allowUserToSave();
+         event->accept();
+         return;
       }
-      event->accept();
+
+    event->ignore();
+    allowUserToSave();
 }
 
 void MainWindow::on_actionPrint_triggered()
