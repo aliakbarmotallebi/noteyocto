@@ -9,28 +9,57 @@
 FindDialog::FindDialog(QWidget *parent) :
     QDialog(parent)
 {
-    QLabel *findLabel = new QLabel(tr("Find What:"));
+    findLabel = new QLabel(tr("Find What:"));
 
     lineEdit = new QLineEdit;
 
     findBtn = new QPushButton(tr("&Find"));
     findNextBtn = new QPushButton(tr("&Find next"));
+    caseSensitiveCheckBox = new QCheckBox(tr("&Case Sensitive"));
+    wholeWordsCheckBox = new QCheckBox(tr("&Whole Words"));
 
     queryText = "";
 
-    QHBoxLayout *layout = new QHBoxLayout();
-    layout->addWidget(findLabel);
-    layout->addWidget(lineEdit);
-    layout->addWidget(findBtn);
-    layout->addWidget(findNextBtn);
 
-    setLayout(layout);
+    horizontalLayout = new QHBoxLayout();
+    optionsLayout = new QHBoxLayout();
+    verticalLayout = new QVBoxLayout();
+
+
+    verticalLayout->addLayout(horizontalLayout);
+    verticalLayout->addLayout(optionsLayout);
+
+
+    horizontalLayout->addWidget(findLabel);
+    horizontalLayout->addWidget(lineEdit);
+    horizontalLayout->addWidget(findBtn);
+    horizontalLayout->addWidget(findNextBtn);
+
+    optionsLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    optionsLayout->addWidget(caseSensitiveCheckBox);
+    optionsLayout->addWidget(wholeWordsCheckBox);
+
+    setLayout(verticalLayout);
     setWindowTitle(tr("Find"));
+
 
     connect(findBtn, SIGNAL(clicked()), this, SLOT(on_findButton_clicked()));
     connect(findNextBtn, SIGNAL(clicked()), this, SLOT(on_findNextButton_clicked()));
 
 
+}
+
+FindDialog::~FindDialog()
+{
+    delete findLabel;
+    delete lineEdit;
+    delete findBtn;
+    delete findNextBtn;
+    delete caseSensitiveCheckBox;
+    delete wholeWordsCheckBox;
+    delete horizontalLayout;
+    delete verticalLayout;
+    delete optionsLayout;
 }
 
 void FindDialog::on_findButton_clicked()
@@ -44,7 +73,9 @@ void FindDialog::on_findButton_clicked()
 
     queryText = query;
 
-    emit(queryTextReady(queryText, false));
+    bool caseSensitive = caseSensitiveCheckBox->isChecked();
+    bool wholeWords = wholeWordsCheckBox->isChecked();
+    emit(queryTextReady(queryText, false, caseSensitive, wholeWords));
 }
 
 void FindDialog::on_findNextButton_clicked()
@@ -57,6 +88,7 @@ void FindDialog::on_findNextButton_clicked()
     }
 
     queryText = query;
-
-    emit(queryTextReady(queryText, true));
+    bool caseSensitive = caseSensitiveCheckBox->isChecked();
+    bool wholeWords = wholeWordsCheckBox->isChecked();
+    emit(queryTextReady(queryText, false, caseSensitive, wholeWords));
 }

@@ -53,7 +53,8 @@ public slots:
     void on_actionSeleteAll_triggered();
     void on_actionExit_triggered();
     void on_actionPrint_triggered();
-    void on_findQueryText_ready(QString queryText, bool findNext);
+    void on_findQueryText_ready(QString queryText, bool findNext,
+                                bool caseSensitive, bool wholeWords);
 
 };
 

@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     findDialog = new FindDialog();
     findDialog->setParent(this, Qt::Tool | Qt::MSWindowsFixedSizeDialogHint);
+
     connect(findDialog, &FindDialog::queryTextReady, this, &MainWindow::on_findQueryText_ready);
 
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
@@ -29,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    qDebug() << "CLOSE MainWindow";
     delete findDialog;
     delete ui;
 }
@@ -201,7 +203,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
-void MainWindow::on_findQueryText_ready(QString queryText, bool findNext)
+void MainWindow::on_findQueryText_ready(QString queryText, bool findNext, bool caseSensitive, bool wholeWords)
 {
     int cursorPositionPriorToSearch = ui->textEdit->textCursor().position();
 
@@ -213,11 +215,25 @@ void MainWindow::on_findQueryText_ready(QString queryText, bool findNext)
         ui->textEdit->moveCursor(QTextCursor::Start);
     }
 
-    bool matchFound = ui->textEdit->find(queryText, QTextDocument::FindCaseSensitively);
+
+    QTextDocument::FindFlags searchOptions = QTextDocument::FindFlags();
+
+    if(caseSensitive)
+    {
+        searchOptions |= QTextDocument::FindCaseSensitively;
+    }
+
+    if(wholeWords)
+    {
+        searchOptions |= QTextDocument::FindWholeWords;
+    }
+
+    bool matchFound = ui->textEdit->find(queryText, searchOptions);
+
     if(!matchFound && findNext)
     {
       ui->textEdit->moveCursor(QTextCursor::Start);
-      matchFound = ui->textEdit->find(queryText, QTextDocument::FindCaseSensitively);
+      matchFound = ui->textEdit->find(queryText, searchOptions);
     }
 
 
@@ -226,10 +242,10 @@ void MainWindow::on_findQueryText_ready(QString queryText, bool findNext)
         findDialog->clearLineEdit();
         findDialog->hide();
         positionOfLastFindMatch = ui->textEdit->textCursor().position();
+
     }else{
 
         positionOfLastFindMatch = -1;
-
         QTextCursor newCursor = ui->textEdit->textCursor();
         newCursor.setPosition(cursorPositionPriorToSearch);
         ui->textEdit->setTextCursor(newCursor);
