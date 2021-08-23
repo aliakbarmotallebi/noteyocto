@@ -14,13 +14,15 @@ public:
      void clearLineEdit() { lineEdit->clear(); }
 
 signals:
-    void queryTextReady(QString queryText);
+    void queryTextReady(QString queryText, bool findNext);
 
 public slots:
     void on_findButton_clicked();
+    void on_findNextButton_clicked();
 
 private:
     QPushButton *findBtn;
+    QPushButton *findNextBtn;
     QLineEdit *lineEdit;
     QString queryText;
 };

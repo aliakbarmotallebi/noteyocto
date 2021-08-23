@@ -20,8 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setTabStopWidth(5);
 
     findDialog = new FindDialog();
-    findDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
-    findDialog->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint); // to prevent resizing
+    findDialog->setParent(this, Qt::Tool | Qt::MSWindowsFixedSizeDialogHint);
     connect(findDialog, &FindDialog::queryTextReady, this, &MainWindow::on_findQueryText_ready);
 
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::actionSave_and_actionSaveAs);
@@ -71,6 +70,7 @@ void MainWindow::resetEditor()
     ui->textEdit->setText("");
     setWindowTitle(defaultWindowTitle);
     fileNeedsToBeSaved = false;
+    positionOfLastFindMatch = -1;
 }
 
 QString MainWindow::getFileNameFromPath(QString filePath){
@@ -201,23 +201,37 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
-void MainWindow::on_findQueryText_ready(QString queryText)
+void MainWindow::on_findQueryText_ready(QString queryText, bool findNext)
 {
-    ui->textEdit->find("");
-    int oldCursorPosition = ui->textEdit->textCursor().position();
-    ui->textEdit->moveCursor(QTextCursor::Start);
-    bool matchFound = ui->textEdit->find(queryText, QTextDocument::FindWholeWords);
-    qDebug() << matchFound;
+    int cursorPositionPriorToSearch = ui->textEdit->textCursor().position();
+
+    if(findNext && positionOfLastFindMatch != -1)
+    {
+        ui->textEdit->textCursor().setPosition(positionOfLastFindMatch);
+    }else
+    {
+        ui->textEdit->moveCursor(QTextCursor::Start);
+    }
+
+    bool matchFound = ui->textEdit->find(queryText, QTextDocument::FindCaseSensitively);
+    if(!matchFound && findNext)
+    {
+      ui->textEdit->moveCursor(QTextCursor::Start);
+      matchFound = ui->textEdit->find(queryText, QTextDocument::FindCaseSensitively);
+    }
+
 
     if(matchFound)
     {
         findDialog->clearLineEdit();
         findDialog->hide();
-    }
-    else
-    {
+        positionOfLastFindMatch = ui->textEdit->textCursor().position();
+    }else{
+
+        positionOfLastFindMatch = -1;
+
         QTextCursor newCursor = ui->textEdit->textCursor();
-        newCursor.setPosition(oldCursorPosition);
+        newCursor.setPosition(cursorPositionPriorToSearch);
         ui->textEdit->setTextCursor(newCursor);
         QMessageBox::information(findDialog, tr("Find unsuccessful"), tr("No results found."));
     }
