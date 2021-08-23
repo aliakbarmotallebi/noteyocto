@@ -47,7 +47,6 @@ public slots:
     void on_actionCopy_triggered();
     void on_actionPaste_triggered();
     void on_actionFind_triggered();
-    void on_actionFindNext_triggered();
     void on_actionReplace_triggered();
     void on_actionGoTo_triggered();
     void on_actionSeleteAll_triggered();

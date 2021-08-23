@@ -164,7 +164,6 @@ void MainWindow::on_actionCut_triggered(){ ui->textEdit->cut(); }
 void MainWindow::on_actionCopy_triggered(){ ui->textEdit->copy(); }
 void MainWindow::on_actionPaste_triggered(){ ui->textEdit->paste(); }
 void MainWindow::on_actionFind_triggered(){ findDialog->show(); }
-void MainWindow::on_actionFindNext_triggered(){}
 void MainWindow::on_actionReplace_triggered(){}
 void MainWindow::on_actionGoTo_triggered(){}
 void MainWindow::on_actionSeleteAll_triggered(){}
@@ -207,13 +206,14 @@ void MainWindow::on_findQueryText_ready(QString queryText, bool findNext, bool c
 {
     int cursorPositionPriorToSearch = ui->textEdit->textCursor().position();
 
-    if(findNext && positionOfLastFindMatch != -1)
-    {
-        ui->textEdit->textCursor().setPosition(positionOfLastFindMatch);
-    }else
+    if(!findNext && positionOfLastFindMatch == -1)
     {
         ui->textEdit->moveCursor(QTextCursor::Start);
     }
+    else
+        {
+            ui->textEdit->textCursor().setPosition(positionOfLastFindMatch);
+        }
 
 
     QTextDocument::FindFlags searchOptions = QTextDocument::FindFlags();

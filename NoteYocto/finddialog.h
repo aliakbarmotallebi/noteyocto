@@ -23,12 +23,10 @@ signals:
                         bool caseSensitive, bool wholeWords);
 
 public slots:
-    void on_findButton_clicked();
     void on_findNextButton_clicked();
 
 private:
     QLabel *findLabel;
-    QPushButton *findBtn;
     QPushButton *findNextBtn;
     QLineEdit *lineEdit;
     QCheckBox *caseSensitiveCheckBox;
